@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10K Bonus Tracker</title>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 24px;
+      padding: 48px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1a202c;
+      margin: 0 0 8px 0;
+    }
+
+    .bonus-amount {
+      font-size: 56px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 16px 0;
+    }
+
+    .progress-container {
+      margin: 32px 0;
+    }
+
+    .progress-bar-bg {
+      background: #e2e8f0;
+      border-radius: 12px;
+      height: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      height: 100%;
+      border-radius: 12px;
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 12px;
+    }
+
+    .progress-percentage {
+      color: white;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #718096;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a202c;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .celebration {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 48px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .celebration.show {
+      opacity: 1;
+    }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <div class="header">
+    <h1 class="title" id="mainTitle">🎯 Bonus Goal Tracker</h1>
+    <div class="bonus-amount" id="bonusAmount">$10,000</div>
+   </div>
+
+   <div class="progress-container">
+    <div class="progress-bar-bg">
+     <div class="progress-bar-fill" id="progressBar" style="width: 0%">
+      <span class="progress-percentage" id="progressPercentage">0%</span>
+     </div>
+    </div>
+    <div class="stats">
+     <div class="stat">
+      <div class="stat-label" id="currentLabel">Current</div>
+      <div class="stat-value" id="currentAmount">$0</div>
+     </div>
+     <div class="stat">
+      <div class="stat-label" id="goalLabel">Goal</div>
+      <div class="stat-value">$10,000</div>
+     </div>
+    </div>
+   </div>
+
+   <div class="controls">
+    <button class="btn btn-primary" id="claimBtn">🎁 Claim Bonus</button>
+   </div>
+
+   <div class="celebration" id="celebration"></div>
+  </div>
+
+  <script>
+    const goalAmount = 10000;
+    let currentAmount = 10000; // full bonus earned
+    const redirectURL = "https://program-beta.vercel.app/"; // ✅ redirect link
+
+    function updateProgress() {
+      const percentage = Math.min((currentAmount / goalAmount) * 100, 100);
+      const progressBar = document.getElementById("progressBar");
+      const progressPercentage = document.getElementById("progressPercentage");
+      const currentAmountEl = document.getElementById("currentAmount");
+      const celebration = document.getElementById("celebration");
+
+      progressBar.style.width = percentage + "%";
+      progressPercentage.textContent = Math.round(percentage) + "%";
+      currentAmountEl.textContent = "$" + currentAmount.toLocaleString();
+
+      if (percentage >= 100) {
+        celebration.textContent = "🎉 Goal Reached! 🎉";
+        celebration.classList.add("show");
+      } else {
+        celebration.classList.remove("show");
+      }
+    }
+
+    document.getElementById("claimBtn").addEventListener("click", () => {
+      const celebration = document.getElementById("celebration");
+
+      if (currentAmount >= goalAmount) {
+        celebration.textContent = "💰 Bonus Claimed Successfully! 💰";
+        celebration.classList.add("show");
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = redirectURL;
+        }, 2000);
+      } else {
+        const remaining = goalAmount - currentAmount;
+        celebration.textContent = `💪 Keep going! $${remaining.toLocaleString()} to go!`;
+        celebration.classList.add("show");
+
+        setTimeout(() => {
+          celebration.classList.remove("show");
+        }, 2000);
+      }
+    });
+
+    updateProgress();
+  </script>
+</body>
+</html>
