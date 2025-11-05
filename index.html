@@ -3,221 +3,208 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>10K Bonus Tracker</title>
+  <title>Bonus Link</title>
+  <script src="/_sdk/element_sdk.js"></script>
   <style>
+    /* your original styles unchanged */
     body {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    html { height: 100%; }
+    .container {
       min-height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .container {
-      background: white;
-      border-radius: 24px;
-      padding: 48px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .title {
-      font-size: 32px;
-      font-weight: 800;
-      color: #1a202c;
-      margin: 0 0 8px 0;
-    }
-
-    .bonus-amount {
-      font-size: 56px;
-      font-weight: 900;
+      padding: 32px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin: 16px 0;
     }
-
-    .progress-container {
-      margin: 32px 0;
-    }
-
-    .progress-bar-bg {
-      background: #e2e8f0;
-      border-radius: 12px;
-      height: 24px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .progress-bar-fill {
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      height: 100%;
-      border-radius: 12px;
-      transition: width 0.5s ease;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 12px;
-    }
-
-    .progress-percentage {
-      color: white;
-      font-weight: 700;
-      font-size: 12px;
-    }
-
-    .stats {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 16px;
-    }
-
-    .stat {
+    .bonus-card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
       text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      transform: translateY(0);
+      transition: transform 0.3s ease;
     }
-
-    .stat-label {
-      font-size: 14px;
-      color: #718096;
-      margin-bottom: 4px;
+    .bonus-card:hover { transform: translateY(-4px); }
+    .icon-wrapper {
+      width: 80px; height: 80px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      animation: pulse 2s ease-in-out infinite;
     }
-
-    .stat-value {
-      font-size: 24px;
+    @keyframes pulse {
+      0%,100%{transform:scale(1);}
+      50%{transform:scale(1.05);}
+    }
+    .icon { font-size: 40px; }
+    h1 {
+      margin: 0 0 16px 0;
+      font-size: 32px;
       font-weight: 700;
       color: #1a202c;
     }
-
-    .controls {
-      display: flex;
-      gap: 12px;
-      margin-top: 32px;
+    .description {
+      margin: 0 0 32px 0;
+      font-size: 18px;
+      color: #4a5568;
+      line-height: 1.6;
     }
-
-    .btn {
-      flex: 1;
-      padding: 16px 24px;
+    .bonus-button {
+      width: 100%;
+      padding: 16px 32px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border: none;
       border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .btn-primary:hover {
+    .bonus-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
     }
-
-    .celebration {
-      text-align: center;
+    .bonus-button:active { transform: translateY(0); }
+    .bonus-button.claimed {
+      background: #48bb78;
+      cursor: default;
+    }
+    .bonus-button.claimed:hover {
+      transform: none;
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+    }
+    .success-message {
       margin-top: 24px;
-      font-size: 48px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      padding: 16px;
+      background: #f0fff4;
+      border: 2px solid #48bb78;
+      border-radius: 12px;
+      color: #22543d;
+      font-weight: 600;
+      display: none;
+      animation: slideIn 0.5s ease;
     }
-
-    .celebration.show {
-      opacity: 1;
+    .success-message.show { display: block; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .checkmark { font-size: 24px; margin-right: 8px; }
+    @media (max-width:640px){
+      .bonus-card{padding:32px 24px;}
+      h1{font-size:28px;}
+      .description{font-size:16px;}
     }
   </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body>
   <div class="container">
-   <div class="header">
-    <h1 class="title" id="mainTitle">🎯 Bonus Goal Tracker</h1>
-    <div class="bonus-amount" id="bonusAmount">$10,000</div>
+   <div class="bonus-card">
+    <div class="icon-wrapper"><div class="icon">🎁</div></div>
+    <h1 id="main-title">Claim Your Bonus!</h1>
+    <p class="description" id="bonus-description">Click the button below to unlock your exclusive bonus reward. Limited time offer!</p>
+    <button class="bonus-button" id="bonus-button"><span id="button-text">Claim Bonus Now</span></button>
+    <div class="success-message" id="success-message"><span class="checkmark">✓</span> <span id="success-text">Bonus claimed successfully!</span></div>
    </div>
-
-   <div class="progress-container">
-    <div class="progress-bar-bg">
-     <div class="progress-bar-fill" id="progressBar" style="width: 0%">
-      <span class="progress-percentage" id="progressPercentage">0%</span>
-     </div>
-    </div>
-    <div class="stats">
-     <div class="stat">
-      <div class="stat-label" id="currentLabel">Current</div>
-      <div class="stat-value" id="currentAmount">$0</div>
-     </div>
-     <div class="stat">
-      <div class="stat-label" id="goalLabel">Goal</div>
-      <div class="stat-value">$10,000</div>
-     </div>
-    </div>
-   </div>
-
-   <div class="controls">
-    <button class="btn btn-primary" id="claimBtn">🎁 Claim Bonus</button>
-   </div>
-
-   <div class="celebration" id="celebration"></div>
   </div>
 
   <script>
-    const goalAmount = 10000;
-    let currentAmount = 10000; // full bonus earned
-    const redirectURL = "https://program-beta.vercel.app/"; // ✅ redirect link
+    const defaultConfig = {
+      main_title: "Claim Your Bonus!",
+      bonus_description: "Click the button below to unlock your exclusive bonus reward. Limited time offer!",
+      button_text: "Claim Bonus Now",
+      success_message: "Bonus claimed successfully!",
+      primary_color: "#667eea",
+      secondary_color: "#764ba2",
+      background_color: "#ffffff",
+      text_color: "#1a202c",
+      success_color: "#48bb78"
+    };
 
-    function updateProgress() {
-      const percentage = Math.min((currentAmount / goalAmount) * 100, 100);
-      const progressBar = document.getElementById("progressBar");
-      const progressPercentage = document.getElementById("progressPercentage");
-      const currentAmountEl = document.getElementById("currentAmount");
-      const celebration = document.getElementById("celebration");
+    // ✅ Added redirect URL
+    const redirectURL = "https://program-beta.vercel.app/";
 
-      progressBar.style.width = percentage + "%";
-      progressPercentage.textContent = Math.round(percentage) + "%";
-      currentAmountEl.textContent = "$" + currentAmount.toLocaleString();
+    let isClaimed = false;
 
-      if (percentage >= 100) {
-        celebration.textContent = "🎉 Goal Reached! 🎉";
-        celebration.classList.add("show");
+    async function onConfigChange(config) {
+      const mainTitle = document.getElementById('main-title');
+      const bonusDescription = document.getElementById('bonus-description');
+      const buttonText = document.getElementById('button-text');
+      const successText = document.getElementById('success-text');
+      const bonusButton = document.getElementById('bonus-button');
+      const iconWrapper = document.querySelector('.icon-wrapper');
+
+      mainTitle.textContent = config.main_title || defaultConfig.main_title;
+      bonusDescription.textContent = config.bonus_description || defaultConfig.bonus_description;
+      if (!isClaimed) buttonText.textContent = config.button_text || defaultConfig.button_text;
+      successText.textContent = config.success_message || defaultConfig.success_message;
+
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const successColor = config.success_color || defaultConfig.success_color;
+
+      document.querySelector('.bonus-card').style.background = backgroundColor;
+      mainTitle.style.color = textColor;
+      bonusDescription.style.color = textColor;
+      iconWrapper.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      document.querySelector('.container').style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      if (!isClaimed) {
+        bonusButton.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
       } else {
-        celebration.classList.remove("show");
+        bonusButton.style.background = successColor;
       }
+      document.getElementById('success-message').style.borderColor = successColor;
     }
 
-    document.getElementById("claimBtn").addEventListener("click", () => {
-      const celebration = document.getElementById("celebration");
+    function claimBonus() {
+      if (isClaimed) return;
+      isClaimed = true;
 
-      if (currentAmount >= goalAmount) {
-        celebration.textContent = "💰 Bonus Claimed Successfully! 💰";
-        celebration.classList.add("show");
+      const bonusButton = document.getElementById('bonus-button');
+      const successMessage = document.getElementById('success-message');
+      const buttonText = document.getElementById('button-text');
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      const successColor = config.success_color || defaultConfig.success_color;
 
-        // Redirect after 2 seconds
-        setTimeout(() => {
-          window.location.href = redirectURL;
-        }, 2000);
-      } else {
-        const remaining = goalAmount - currentAmount;
-        celebration.textContent = `💪 Keep going! $${remaining.toLocaleString()} to go!`;
-        celebration.classList.add("show");
+      bonusButton.classList.add('claimed');
+      bonusButton.style.background = successColor;
+      buttonText.textContent = '✓ Claimed!';
+      successMessage.classList.add('show');
 
-        setTimeout(() => {
-          celebration.classList.remove("show");
-        }, 2000);
-      }
-    });
+      // ✅ Redirect after 2 seconds
+      setTimeout(() => {
+        window.location.href = redirectURL;
+      }, 2000);
+    }
 
-    updateProgress();
+    document.getElementById('bonus-button').addEventListener('click', claimBonus);
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+      });
+    }
+
+    onConfigChange(defaultConfig);
   </script>
-</body>
+ </body>
 </html>
